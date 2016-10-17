@@ -26,20 +26,28 @@ const setBodyAsParsedXML = (response) => {
 
 export class RNS3 {
 
-  static put(file, options) {
-    options = Object.assign({}, options, {
-      key: (options.keyPrefix || '') + file.name,
-      contentType: file.type
-    });
-
+  constructor(options) {
+    this._options = options 
     let url = `https://${ options.bucket }.s3.amazonaws.com`;
     let method = "POST";
     let policy = S3Policy.generate(options);
 
-    return Request.create(url, method, policy)
+    this._request = Request.create(url, method, policy)
+  }
+
+  put(file, options) {
+    this._options = Object.assign(this._options, options, {
+      key: (options.keyPrefix || '') + file.name,
+      contentType: file.type
+    });
+    this._request
       .set("file", file)
       .send()
       .then(setBodyAsParsedXML);
   }
 
+  abort() {
+    this._request.abort()
+  }
+ 
 }

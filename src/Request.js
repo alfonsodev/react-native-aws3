@@ -48,6 +48,11 @@ export class Request {
     Object.keys(headers).forEach((k) => this.header(k, headers[k]));
   }
 
+  abort() {
+    this._xhr.abort();
+    return this;
+  }
+ 
   header(key, value) {
     this._xhr.setRequestHeader(key, value);
     return this;
